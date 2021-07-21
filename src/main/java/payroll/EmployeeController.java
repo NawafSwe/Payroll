@@ -67,8 +67,7 @@ class EmployeeController {
     ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
         EntityModel<Employee> entityModel = repository.findById(id)
                 .map(employee -> {
-                    // mark the new emp with same id as old emp as a result any new data from new emp will be merged into old emp 
-                    newEmployee.setId(id);
+                    // mark the new emp with same id as old emp as a result any new data from new emp will be merged into old emp
                     return assembler.toModel(repository.save(newEmployee));
                 })
                 .orElseGet(() -> {
@@ -81,7 +80,8 @@ class EmployeeController {
     }
 
     @DeleteMapping("/employees/{id}")
-    void deleteEmployee(@PathVariable Long id) {
+    ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
