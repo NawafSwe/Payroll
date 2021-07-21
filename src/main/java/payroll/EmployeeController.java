@@ -1,10 +1,13 @@
 package payroll;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +44,13 @@ class EmployeeController {
     // end::get-aggregate-root[]
 
     @PostMapping("/employees")
-    EntityModel<Employee> newEmployee(@RequestBody Employee newEmployee) {
-        return assembler.toModel(repository.save(newEmployee));
+    ResponseEntity<?> newEmployee(@RequestBody Employee newEmployee) {
+        EntityModel<Employee> employeeEntityModel = assembler.toModel(repository.save(newEmployee));
+        //Spring MVC’s ResponseEntity is used to create an HTTP 201 Created status message. This type of response typically includes a Location response header,
+        // and we use the URI derived from the model’s self-related link.
+        return ResponseEntity
+                .created(employeeEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(employeeEntityModel);
     }
 
     // Single item

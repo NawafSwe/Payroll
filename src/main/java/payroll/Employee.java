@@ -56,7 +56,7 @@ public class Employee {
     public void setName(String name) {
         String[] names = name.split(" ");
         this.firstName = names[0];
-        this.lastName = names[0];
+        this.lastName = names[1];
     }
 
     public String getRole() {
