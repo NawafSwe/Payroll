@@ -2,6 +2,7 @@ package payroll;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.hateoas.CollectionModel;
@@ -66,9 +67,9 @@ class EmployeeController {
     ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
         EntityModel<Employee> entityModel = repository.findById(id)
                 .map(employee -> {
-                    employee.setName(newEmployee.getName());
-                    employee.setRole(newEmployee.getRole());
-                    return assembler.toModel(repository.save(employee));
+                    // mark the new emp with same id as old emp as a result any new data from new emp will be merged into old emp 
+                    newEmployee.setId(id);
+                    return assembler.toModel(repository.save(newEmployee));
                 })
                 .orElseGet(() -> {
                     newEmployee.setId(id);
