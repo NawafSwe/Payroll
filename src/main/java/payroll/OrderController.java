@@ -1,21 +1,22 @@
 package payroll;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    private OrderRepository repository;
-    private OrderModelAssembler assembler;
+    private final OrderRepository repository;
+    private final OrderModelAssembler assembler;
 
     public OrderController(OrderRepository repository, OrderModelAssembler assembler) {
         this.repository = repository;
@@ -24,9 +25,10 @@ public class OrderController {
 
     // get all orders
     @GetMapping(path = "")
-    CollectionModel<EntityModel<Order>> all() {
+    ResponseEntity<?> all() {
         List<EntityModel<Order>> orders = repository.findAll().stream().map(assembler::toModel).collect(Collectors.toList());
-        return CollectionModel.of(orders);
+        return ResponseEntity
+                .ok(CollectionModel.of(orders, linkTo(methodOn(OrderController.class).all()).withRel("orders")));
     }
 
     @GetMapping(path = "/{id}")
@@ -38,5 +40,13 @@ public class OrderController {
 
     }
 
+    @PostMapping(path = "")
+    ResponseEntity<?> postOrder(@RequestBody Order newOrder) {
+        EntityModel<Order> orderEntityModel = assembler.toModel(repository.save(newOrder));
+        return ResponseEntity
+                .created(orderEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(orderEntityModel);
+
+    }
 
 }
