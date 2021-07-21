@@ -63,8 +63,7 @@ public class OrderController {
             findOrder.setStatus(Status.COMPLETED);
             EntityModel<Order> updatedEntityOrder = assembler.toModel(repository.save(findOrder));
             return ResponseEntity
-                    .created(updatedEntityOrder.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(updatedEntityOrder);
+                    .ok(updatedEntityOrder);
         }
 
         return ResponseEntity
