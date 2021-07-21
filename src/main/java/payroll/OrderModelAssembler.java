@@ -11,8 +11,14 @@ import org.springframework.stereotype.Component;
 public class OrderModelAssembler implements RepresentationModelAssembler<Order, EntityModel<Order>> {
     @Override
     public EntityModel<Order> toModel(Order order) {
-        return EntityModel.of(order,
+        EntityModel<Order> orderEntityModel = EntityModel.of(order,
                 linkTo(methodOn(OrderController.class).one(order.getId())).withSelfRel(),
                 linkTo(methodOn(OrderController.class).all()).withRel("orders"));
+        if (order.getStatus() == Status.IN_PROGRESS) {
+            orderEntityModel.add(linkTo(methodOn(OrderController.class).one(order.getId())).withRel("cancel"));
+            orderEntityModel.add(linkTo(methodOn(OrderController.class).one(order.getId())).withRel("complete"));
+        }
+
+        return orderEntityModel;
     }
 }

@@ -44,6 +44,7 @@ public class OrderController {
 
     @PostMapping(path = "")
     ResponseEntity<?> postOrder(@RequestBody Order newOrder) {
+        newOrder.setStatus(Status.IN_PROGRESS);
         EntityModel<Order> orderEntityModel = assembler.toModel(repository.save(newOrder));
         return ResponseEntity
                 .created(orderEntityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -61,7 +62,7 @@ public class OrderController {
                 .body(updatedOrder);
     }
 
-    @DeleteMapping(path = "")
+    @DeleteMapping(path = "/{id}")
     ResponseEntity<?> delete(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
