@@ -1,5 +1,6 @@
 package payroll;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -49,4 +51,19 @@ public class OrderController {
 
     }
 
+    @PutMapping(path = "/{id}")
+    ResponseEntity<?> putOrder(@RequestBody Order updatedOrder, @PathVariable Long id) {
+        Order findOrder = repository.findById(id).orElseThrow(() -> new OrderNotFoundException("order with id: " + id + "was not found"));
+        updatedOrder.setId(id);
+        repository.save(updatedOrder);
+        return ResponseEntity
+                .created(assembler.toModel(updatedOrder).getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(updatedOrder);
+    }
+
+    @DeleteMapping(path = "")
+    ResponseEntity<?> delete(@PathVariable Long id) {
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
