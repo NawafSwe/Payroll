@@ -10,20 +10,39 @@ public class Employee {
     private @Id
     @GeneratedValue
     Long id;
-    private String name;
     private String role;
+    private String firstName;
+    private String lastName;
 
     public Employee() {
     }
 
-    Employee(String name, String role) {
+    public Employee(String name, String role, String firstName, String lastName) {
 
-        this.name = name;
         this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public void setId(Long id) {
@@ -31,11 +50,13 @@ public class Employee {
     }
 
     public String getName() {
-        return name;
+        return this.firstName + " " + this.lastName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        String[] names = name.split(" ");
+        this.firstName = names[0];
+        this.lastName = names[0];
     }
 
     public String getRole() {
@@ -58,12 +79,12 @@ public class Employee {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.role);
+        return Objects.hash(this.id, this.firstName, this.lastName, this.role);
     }
 
     @Override
     public String toString() {
-        return "Employee{" + "id=" + this.id + ", name='" + this.name + '\'' + ", role='" + this.role + '\'' + '}';
+        return "Employee{" + "id=" + this.id + ", first name='" + this.firstName + ", last name=" + this.lastName + '\'' + ", role='" + this.role + '\'' + '}';
     }
 }
 

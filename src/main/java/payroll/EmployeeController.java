@@ -41,12 +41,11 @@ class EmployeeController {
     // end::get-aggregate-root[]
 
     @PostMapping("/employees")
-    Employee newEmployee(@RequestBody Employee newEmployee) {
-        return repository.save(newEmployee);
+    EntityModel<Employee> newEmployee(@RequestBody Employee newEmployee) {
+        return assembler.toModel(repository.save(newEmployee));
     }
 
     // Single item
-
     @GetMapping("/employees/{id}")
     EntityModel<Employee> one(@PathVariable Long id) {
         Employee employee = repository.findById(id)
