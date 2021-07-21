@@ -60,7 +60,7 @@ public class OrderController {
         Order findOrder = repository.findById(id).orElseThrow(() -> new OrderNotFoundException("order with id: " + id + "was not found"));
 
         if (findOrder.getStatus() == Status.IN_PROGRESS) {
-            findOrder.setStatus(findOrder.getStatus());
+            findOrder.setStatus(Status.COMPLETED);
             EntityModel<Order> updatedEntityOrder = assembler.toModel(repository.save(findOrder));
             return ResponseEntity
                     .created(updatedEntityOrder.getRequiredLink(IanaLinkRelations.SELF).toUri())
