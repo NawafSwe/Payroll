@@ -73,5 +73,3 @@ public class Order {
         return "Order{" + "id=" + this.id + ", description='" + this.description + '\'' + ", status=" + this.status + '}';
     }
 }
-
-}
